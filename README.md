@@ -2,13 +2,15 @@
 
 Repackages the official Free Download Manager `.deb` as a native Fedora RPM, with automatic RPATH, Wayland/XCB, and AppStream fixes baked in. Includes a manual installation guide and script for those who prefer not to use RPM.
 
+> **Pre-built RPM available:** A pre-built `.rpm` is available in the [Releases](../../releases) section of this repo for those who want to install quickly. However, **it is strongly recommended that you build the RPM yourself** using the instructions below — downloading pre-built packages from individuals on the internet carries inherent risk, and building it yourself means you know exactly what is in the package. The spec file and all steps are fully documented here.
+
 ---
 
 ## Tested On
 
 | Component | Version |
 |-----------|---------|
-| Fedora | 44 Beta |
+| Fedora | 44 Beta (clean VM install) |
 | GNOME | 50 |
 | FDM | 6.22 |
 | RPM build tools | fc44 |
@@ -17,7 +19,13 @@ Repackages the official Free Download Manager `.deb` as a native Fedora RPM, wit
 
 ## Known Limitations
 
-- **Window corners are square.** FDM's bundled Qt6 was compiled without `xdg-decoration` protocol support, which is what GNOME uses to apply rounded corners to non-GTK windows. This affects both XCB and native Wayland modes equally and cannot be fixed without FDM recompiling their Qt6. If this bothers you, install the [Rounded Window Corners Reloaded](https://extensions.gnome.org/extension/5237/rounded-window-corners-reloaded/) GNOME extension.
+- **Window corners are square.** FDM's bundled Qt6 was compiled without `xdg-decoration` protocol support, which is what GNOME uses to apply rounded corners to non-GTK windows. This affects both XCB and native Wayland modes equally and cannot be fixed without FDM recompiling their Qt6. The [Rounded Window Corners Reloaded](https://extensions.gnome.org/extension/5237/rounded-window-corners-reloaded/) GNOME extension can fix this, however it does not currently have an official release for Fedora 44 / GNOME 50. It may still be possible to install it directly from the [project's GitHub](https://github.com/yilozt/rounded-window-corners) — check there for the latest status.
+
+---
+
+## Browser Extension
+
+Once FDM is installed, remember to also install the browser integration extension so FDM can intercept downloads from your browser:
 
 ---
 
@@ -27,11 +35,15 @@ There are two ways to install FDM using this repo. Choose whichever suits you:
 
 ### Method 1 — RPM Package (Recommended)
 
-Build and install a proper `.rpm` using Fedora's package manager. This is the cleanest approach — `dnf` tracks every file and uninstallation is a single command.
+Build and install a proper `.rpm` using Fedora's package manager. This is the cleanest approach — `dnf` tracks every file and uninstallation is a single command. See [Building the RPM Yourself](#building-the-rpm-yourself) below for full instructions.
 
-**Install and uninstall via terminal:**
+**Install via terminal:**
 ```bash
-sudo dnf install freedownloadmanager-6.22-1.fc44.x86_64.rpm
+sudo dnf install freedownloadmanager-6.22-3.fc44.x86_64.rpm
+```
+
+**Uninstall via terminal:**
+```bash
 sudo dnf remove freedownloadmanager
 ```
 
@@ -40,9 +52,7 @@ You can also install and uninstall through the GNOME Software GUI. A few things 
 - Right-clicking and viewing app details will not show full details in the Software Center
 - To uninstall via GUI, open GNOME Software → go to the **Installed** section → scroll to **F** (apps are listed alphabetically) → find Free Download Manager → uninstall from there
 - The app will not display its official icon inside GNOME Software, only in the app grid after installation
-- If you install via terminal (`dnf`), uninstall via terminal. If you install via GNOME Software, uninstall via GNOME Software. Don't mix the two.
-
-> **Security note:** Downloading pre-built RPMs from individuals on the internet carries inherent risk. It is strongly recommended that you build the RPM yourself using the instructions below — that way you know exactly what is in the package.
+- If you install via terminal (`dnf`), uninstall via terminal. If you install via GNOME Software, uninstall via GNOME Software — do not mix the two
 
 ---
 
@@ -50,14 +60,18 @@ You can also install and uninstall through the GNOME Software GUI. A few things 
 
 Extracts the `.deb` and places the files manually without using the RPM build system. Faster to get started but leaves no package manager entry — uninstallation is handled by running the same script with the `--uninstall` flag.
 
+**Install (auto-detects `.deb` in `~/Downloads`):**
 ```bash
-# Install
 bash install-fdm.sh
+```
 
-# Or specify a custom path to the .deb
+**Install with a custom path:**
+```bash
 bash install-fdm.sh ~/Downloads/freedownloadmanager.deb
+```
 
-# Uninstall
+**Uninstall:**
+```bash
 bash install-fdm.sh --uninstall
 ```
 
@@ -105,11 +119,11 @@ cp fdm.spec ~/rpmbuild/SPECS/fdm.spec
 rpmbuild -ba ~/rpmbuild/SPECS/fdm.spec
 ```
 
-A successful build will print two lines at the end like:
+After 1 - 2 minutes, a successful build will print two lines at the end like:
 
 ```
-Wrote: /home/<you>/rpmbuild/SRPMS/freedownloadmanager-6.22-1.fc44.src.rpm
-Wrote: /home/<you>/rpmbuild/RPMS/x86_64/freedownloadmanager-6.22-1.fc44.x86_64.rpm
+Wrote: /home/<you>/rpmbuild/SRPMS/freedownloadmanager-6.22-3.fc44.src.rpm
+Wrote: /home/<you>/rpmbuild/RPMS/x86_64/freedownloadmanager-6.22-3.fc44.x86_64.rpm
 ```
 
 **5. Install**
@@ -119,6 +133,12 @@ sudo dnf install ~/rpmbuild/RPMS/x86_64/freedownloadmanager-*.rpm
 ```
 
 FDM will appear in your GNOME app grid. You can also launch it from the terminal with `fdm`.
+
+**Uninstall**
+
+```bash
+sudo dnf remove freedownloadmanager
+```
 
 ---
 
