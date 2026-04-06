@@ -1,0 +1,5 @@
+# Don't commit the proprietary .deb — users must download it themselves
+*.deb
+
+# Don't commit build output
+*.rpm
